@@ -7,11 +7,16 @@ then
 fi
 
 cd $IMAGE_NAME
-source .env
+if [ -f .env ]
+then
+    source .env
+fi
 git log $TRAVIS_COMMIT_RANGE | grep "\[force ci\]"
 FORCE=$?
 
 if [ "${IMAGE_BUILT}" != "true" ] && [ "$FORCE" != "0" ]; then
     echo "No change, no need to run tests";
-    travis_terminate 0;
+    exit 0;
 fi
+
+exit 1;
