@@ -5,3 +5,4 @@ Monorepo for Karibbu public docker images builds:
 - [node](./node)
 - [php](./php)
 - [netutils](./netutils)
+- [rabbitmq](./rabbitmq)
