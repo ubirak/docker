@@ -6,12 +6,16 @@ if [ -z "${CLUSTER_WITH+x}" ]; then
     exit 155;
 fi
 
+MAX_DELAY=${CLUSTER_DELAY:-10}
+DELAY=`shuf -i1-${MAX_DELAY} -n1`
+
 echo "Trying to cluster with ${CLUSTER_WITH}"
 
 /usr/local/bin/docker-entrypoint.sh rabbitmq-server -detached # Call parent entrypoint
 
 rabbitmqctl stop_app
-sleep 10s # Wait for master to start
+echo "Will wait for ${DELAY}s to join cluster"
+sleep $DELAY # Wait for master to start and avoid race condition
 rabbitmqctl join_cluster rabbit@$CLUSTER_WITH
 
 # Stop the entire RMQ server. This is done so that we
