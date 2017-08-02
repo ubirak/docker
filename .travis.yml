@@ -1,4 +1,4 @@
-language: ruby
+language: c
 
 dist: trusty
 sudo: required
@@ -9,33 +9,58 @@ cache:
 env:
     global:
         - DOCKER_VERSION=17.06.0~ce-0~ubuntu
+        - DOCKER_EXPERIMENTAL=true
+        - MAKEFLAGS="--output-sync=recurse --jobs=2 --max-load=4"
     matrix:
-        - IMAGE_NAME=flow TAG=0.51.1 FLOW_VERSION=0.51.1 OCAML_VERSION=4.03.0
-        - IMAGE_NAME=php TAG=7.1.7 FROM_FQIN=php:7.1.7-zts-alpine COMPOSER_VERSION=1.4.2 PRESTISSIMO_VERSION=0.3.7 PHPCSFIXER_VERSION=2.3.2 PHPSTAN_VERSION=0.7.0 APCUBC_VERSION=1.0.3 RAPHF_VERSION=2.0.0 DS_VERSION=1.1.10 AMQP_VERSION=1.9.1
-        - IMAGE_NAME=netutils TAG=1.0.0 FROM_FQIN=alpine:3.6
-        - IMAGE_NAME=rabbitmq TAG=3.6.10-1 FROM_FQIN=rabbitmq:3.6.10-alpine
+        - IMAGE_NAME=flow
+            TAG=0.51.1
+            FLOW_VERSION=0.51.1
+            OCAML_VERSION=4.03.0
+        - IMAGE_NAME=php
+            TAG=7.1.7
+            FROM_FQIN=php:7.1.7-zts-alpine
+            COMPOSER_VERSION=1.4.2
+            PRESTISSIMO_VERSION=0.3.7
+            APCUBC_VERSION=1.0.3
+            RAPHF_VERSION=2.0.0
+            AMQP_VERSION=1.9.1
+        - IMAGE_NAME=netutils
+            TAG=1.0.0
+            FROM_FQIN=alpine:3.6
+        - IMAGE_NAME=rabbitmq
+            TAG=3.6.10-1
+            FROM_FQIN=rabbitmq:3.6.10-alpine
 
 before_install:
     - |
-        if [ "$(docker version -f '{{.Server.Version}}')|sed -e 's/-ce.*$//'" != "$(echo $DOCKER_VERSION|sed -e 's/~ce.*$//')" ] ; then
+        if [ ! -z "${DOCKER_EXPERIMENTAL}" ] ; then
+            echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+        fi
+        if [ "$(docker version -f '{{.Server.Version}}')|sed -e 's/-ce.*$//'" != "$(echo ${DOCKER_VERSION}|sed -e 's/~ce.*$//')" ] ; then
+            apt-cache madison docker-ce
             sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-ce=${DOCKER_VERSION}
+        else
+            sudo service docker restart
         fi
 
 install:
-    - make -C $IMAGE_NAME pull
-    - if [ "$(bin/should-run-test.sh)" ]; then
-        travis_terminate 0;
-      fi
+    - make -C ${IMAGE_NAME} pull
+    - |
+        if git diff-index --exit-code --name-status $(echo ${TRAVIS_COMMIT_RANGE} | cut -d '.' -f 1) ${IMAGE_NAME}; then
+            travis_terminate 0;
+        fi
 
 script:
-    - make -C $IMAGE_NAME build test
+    - make -C ${IMAGE_NAME} build
+    - make -C ${IMAGE_NAME} test
 
 after_success:
-    - make -C $IMAGE_NAME tag images
+    - make -C ${IMAGE_NAME} tag
+    - make -C ${IMAGE_NAME} images
 
 deploy:
     provider: script
-    script: make -C $IMAGE_NAME push
+    script: docker login --username="${DOCKER_HUB_USERNAME}" --password="${DOCKER_HUB_PASSWORD}" && make -C ${IMAGE_NAME} push
     skip_cleanup: true
     on:
         branch: master

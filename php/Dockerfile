@@ -3,15 +3,12 @@ FROM ${FROM_FQIN}
 
 ARG COMPOSER_VERSION
 ARG PRESTISSIMO_VERSION
-ARG PHPCSFIXER_VERSION
-ARG PHPSTAN_VERSION
 ARG APCUBC_VERSION
 ARG RAPHF_VERSION
-ARG DS_VERSION
 ARG AMQP_VERSION
 
-ENV COMPOSER_HOME=/.composer \
-    PATH="$PATH:/.composer/vendor/bin"
+ENV PATH="$PATH:/home/php/bin" \
+    COMPOSER_BIN_DIR=/home/php/bin
 
 RUN env \
     && printf "\
@@ -51,15 +48,12 @@ opcache.fast_shutdown=1\n\
     && apk add --no-cache rabbitmq-c-dev@v3.6 curl@v3.6 libssh2@v3.6 curl-dev@v3.6 \
     && pecl install amqp-${AMQP_VERSION} \
     && docker-php-ext-enable --ini-name 100-amqp.ini amqp \
-    && pecl install ds-${DS_VERSION} \
-    && docker-php-ext-enable --ini-name 100-ds.ini ds \
     && addgroup -g 1000 php \
-    && adduser -u 1000 -G php -s /bin/ash -h /app -D php \
-    && mkdir -p /var/app \
-    && chown php:php /var/app \
-    && mkdir -p ${COMPOSER_HOME} \
-    && chown php:php ${COMPOSER_HOME} \
-    && curl -sL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=${COMPOSER_VERSION} \
+    && adduser -u 1000 -G php -s /bin/ash -D php \
+    && mkdir -p /home/php/app /home/php/bin \
+    && chown php:php /home/php/app /home/php/bin \
+    && curl -sL https://getcomposer.org/installer | php -- --install-dir=/home/php/bin --filename=composer --version=${COMPOSER_VERSION} \
+    && chown php:php /home/php/bin/composer \
     && apk del --no-cache .phpize-deps \
     && apk del --no-cache zlib-dev icu-dev curl-dev binutils linux-headers \
     && apk add --no-cache icu \
@@ -73,10 +67,7 @@ opcache.fast_shutdown=1\n\
         /var/cache/apk/*
 
 USER php
-
 RUN composer global require hirak/prestissimo:${PRESTISSIMO_VERSION} \
-    && composer global require friendsofphp/php-cs-fixer:${PHPCSFIXER_VERSION} \
-    && composer global require phpstan/phpstan:${PHPSTAN_VERSION} \
-    && rm -rf ${COMPOSER_HOME}/cache
+    && composer global clear-cache -vvv
 
-WORKDIR /app
+WORKDIR /home/php/app

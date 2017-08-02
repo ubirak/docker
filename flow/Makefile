@@ -35,7 +35,6 @@ images: ## List built images
 
 push: ## Push built images
 	@if [ "$(IMAGE_BUILT)" = "true" ]; then \
-		docker login --username="$(DOCKER_HUB_USERNAME)" --password="$(DOCKER_HUB_PASSWORD)"; \
 		docker push ${FQIN}; \
 		docker push ${LATEST}; \
 	fi
