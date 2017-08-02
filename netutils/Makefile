@@ -12,7 +12,7 @@ FQIN=karibbu/${IMAGE_NAME}:${TAG}
 LATEST=karibbu/${IMAGE_NAME}:latest
 
 pull: ## Pull docker image
-	@docker pull ${FQIN} > /dev/null 2>&1 || echo "${FQIN} does not exist yet. Will build it."
+	@docker pull ${LATEST} > /dev/null 2>&1 || echo "${FQIN} does not exist yet. Will build it."
 
 build: ## Build docker image. Use f=true to force
 	docker build \
