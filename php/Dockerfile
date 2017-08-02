@@ -7,8 +7,8 @@ ARG APCUBC_VERSION
 ARG RAPHF_VERSION
 ARG AMQP_VERSION
 
-ENV COMPOSER_HOME=/.composer \
-    PATH="$PATH:/.composer/vendor/bin"
+ENV PATH="$PATH:/home/php/bin" \
+    COMPOSER_BIN_DIR=/home/php/bin
 
 RUN env \
     && printf "\
@@ -50,11 +50,10 @@ opcache.fast_shutdown=1\n\
     && docker-php-ext-enable --ini-name 100-amqp.ini amqp \
     && addgroup -g 1000 php \
     && adduser -u 1000 -G php -s /bin/ash -D php \
-    && mkdir -p /home/php/app \
-    && chown php:php /home/php/app \
-    && mkdir -p ${COMPOSER_HOME} \
-    && chown php:php ${COMPOSER_HOME} \
-    && curl -sL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=${COMPOSER_VERSION} \
+    && mkdir -p /home/php/app /home/php/bin \
+    && chown php:php /home/php/app /home/php/bin \
+    && curl -sL https://getcomposer.org/installer | php -- --install-dir=/home/php/bin --filename=composer --version=${COMPOSER_VERSION} \
+    && chown php:php /home/php/bin/composer \
     && apk del --no-cache .phpize-deps \
     && apk del --no-cache zlib-dev icu-dev curl-dev binutils linux-headers \
     && apk add --no-cache icu \
