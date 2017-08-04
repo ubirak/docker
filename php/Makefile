@@ -17,12 +17,15 @@ pull: ## Pull docker image
 build: ## Build docker image. Use f=true to force
 	docker build \
 		--cache-from ${LATEST} \
+		--build-arg PHP_VERSION=${PHP_VERSION} \
+		--build-arg PHP_SHA256=${PHP_SHA256} \
+		--build-arg GPG_KEY_LIST="${GPG_KEY_LIST}" \
 		--build-arg FROM_FQIN=${FROM_FQIN} \
-		--build-arg COMPOSER_VERSION=${COMPOSER_VERSION} \
-		--build-arg PRESTISSIMO_VERSION=${PRESTISSIMO_VERSION} \
 		--build-arg APCUBC_VERSION=${APCUBC_VERSION} \
 		--build-arg RAPHF_VERSION=${RAPHF_VERSION} \
 		--build-arg AMQP_VERSION=${AMQP_VERSION} \
+		--build-arg COMPOSER_VERSION=${COMPOSER_VERSION} \
+		--build-arg PRESTISSIMO_VERSION=${PRESTISSIMO_VERSION} \
 		-t ${FQIN} .
 
 test: ## Test built docker image
