@@ -61,6 +61,7 @@ RUN mkdir -p $PHP_INI_DIR/conf.d \
         --disable-cgi \
         --disable-mysqlnd \
         --disable-pdo \
+        --enable-bcmath \
         --enable-intl \
         --enable-maintainer-zts \
         --enable-mbstring \
