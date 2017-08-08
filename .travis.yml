@@ -13,8 +13,8 @@ env:
         - MAKEFLAGS="--output-sync=recurse --jobs=2 --max-load=4"
     matrix:
         - IMAGE_NAME=flow
-            TAG=0.51.1
-            FLOW_VERSION=0.51.1
+            TAG=0.52.0
+            FLOW_VERSION=0.52.0
             OCAML_VERSION=4.03.0
         - IMAGE_NAME=php
             TAG=7.1.8
