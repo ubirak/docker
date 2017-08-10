@@ -25,7 +25,7 @@ env:
             APCUBC_VERSION=1.0.3
             RAPHF_VERSION=2.0.0
             AMQP_VERSION=1.9.1
-            COMPOSER_VERSION=1.4.2
+            COMPOSER_VERSION=1.5.1
             PRESTISSIMO_VERSION=0.3.7
         - IMAGE_NAME=netutils
             TAG=1.0.0
