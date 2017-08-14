@@ -12,27 +12,27 @@ env:
         - DOCKER_EXPERIMENTAL=true
         - MAKEFLAGS="--output-sync=recurse --jobs=2 --max-load=4"
     matrix:
-        - IMAGE_NAME=flow
-            TAG=0.52.0
-            FLOW_VERSION=0.52.0
-            OCAML_VERSION=4.03.0
+        # - IMAGE_NAME=flow
+        #     TAG=0.52.0
+        #     FLOW_VERSION=0.52.0
+        #     OCAML_VERSION=4.03.0
         - IMAGE_NAME=php
-            TAG=7.1.8
             PHP_VERSION=7.1.8
             PHP_SHA256=8943858738604acb33ecedb865d6c4051eeffe4e2d06f3a3c8f794daccaa2aab
             GPG_KEY_LIST="A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E"
-            FROM_FQIN=alpine:3.6
-            APCUBC_VERSION=1.0.3
-            RAPHF_VERSION=2.0.0
-            AMQP_VERSION=1.9.1
-            COMPOSER_VERSION=1.5.1
-            PRESTISSIMO_VERSION=0.3.7
-        - IMAGE_NAME=netutils
-            TAG=1.0.0
-            FROM_FQIN=alpine:3.6
-        - IMAGE_NAME=rabbitmq
-            TAG=3.6.10-1
-            FROM_FQIN=rabbitmq:3.6.10-alpine
+        - IMAGE_NAME=php
+            PHP_VERSION=7.2.0beta2
+            LATEST_TAG=next
+            PHP_SHA256=0e2ac8e68c6fa92e9e14c610d78e162a711ba0e83987ecc9d02a6b898616c92d
+            GPG_KEY_LIST="1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F"
+            PHP_URL='http://downloads.php.net/~pollita/php-${PHP_VERSION}.tar.xz'
+            PHP_ASC_URL='http://downloads.php.net/~pollita/php-${PHP_VERSION}.tar.xz.asc'
+        # - IMAGE_NAME=netutils
+        #     TAG=1.0.0
+        #     FROM_FQIN=alpine:3.6
+        # - IMAGE_NAME=rabbitmq
+        #     TAG=3.6.10-1
+        #     FROM_FQIN=rabbitmq:3.6.10-alpine
 
 before_install:
     - |
@@ -48,10 +48,6 @@ before_install:
 
 install:
     - make -C ${IMAGE_NAME} pull
-    - |
-        if git diff-index --exit-code --name-status $(echo ${TRAVIS_COMMIT_RANGE} | cut -d '.' -f 1) ${IMAGE_NAME}; then
-            travis_terminate 0;
-        fi
 
 script:
     - make -C ${IMAGE_NAME} build
@@ -59,7 +55,7 @@ script:
 
 after_success:
     - make -C ${IMAGE_NAME} tag
-    - make -C ${IMAGE_NAME} images
+    - docker image ls
 
 deploy:
     provider: script

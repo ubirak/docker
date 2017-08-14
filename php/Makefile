@@ -1,44 +1,44 @@
-.PHONY: help pull build test tag images push
+TAG=$(PHP_VERSION)
+TAGS_TO_PULL=$(TAG)-raw $(TAG)
+include ../Makefile
 
-TARGETS:=$(MAKEFILE_LIST)
-ITSELF:=$(lastword $(MAKEFILE_LIST))
-MAKEFILE_PATH:=$(abspath $(lastword $(TARGETS)))
-TAGS_TO_PUSH:=latest ${TAG}
+APCUBC_VERSION?=
+RAPHF_VERSION?=2.0.0
+AMQP_VERSION?=1.9.1
+COMPOSER_VERSION?=1.5.1
+PRESTISSIMO_VERSION?=0.3.7
+PHP_URL?="https://secure.php.net/get/php-$(PHP_VERSION).tar.xz/from/this/mirror"
+PHP_ASC_URL?="https://secure.php.net/get/php-$(PHP_VERSION).tar.xz.asc/from/this/mirror"
 
-help: ## This help
-	@grep -E '^[a-z A-Z_-]+:.*?## .*$$' $(TARGETS) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+build:
+	@docker build \
+		--cache-from $(DOCKER_IMAGE_NAME):$(TAG)-raw \
+		--build-arg PHP_VERSION=$(PHP_VERSION) \
+		--build-arg PHP_URL=$(PHP_URL) \
+		--build-arg PHP_ASC_URL=$(PHP_ASC_URL) \
+		--build-arg PHP_SHA256=$(PHP_SHA256) \
+		--build-arg GPG_KEY_LIST="$(GPG_KEY_LIST)" \
+		--build-arg APCUBC_VERSION=$(APCUBC_VERSION) \
+		--build-arg RAPHF_VERSION=$(RAPHF_VERSION) \
+		--build-arg AMQP_VERSION=$(AMQP_VERSION) \
+		--target raw \
+		-t $(DOCKER_IMAGE_NAME):$(TAG)-raw .
+	@docker build \
+		--cache-from $(DOCKER_IMAGE_NAME):$(TAG)-raw \
+		--build-arg PHP_VERSION=$(PHP_VERSION) \
+		--build-arg PHP_URL=$(PHP_URL) \
+		--build-arg PHP_ASC_URL=$(PHP_ASC_URL) \
+		--build-arg PHP_SHA256=$(PHP_SHA256) \
+		--build-arg GPG_KEY_LIST="$(GPG_KEY_LIST)" \
+		--build-arg APCUBC_VERSION=$(APCUBC_VERSION) \
+		--build-arg RAPHF_VERSION=$(RAPHF_VERSION) \
+		--build-arg AMQP_VERSION=$(AMQP_VERSION) \
+		--cache-from $(DOCKER_IMAGE_NAME):$(TAG) \
+		--build-arg COMPOSER_VERSION=$(COMPOSER_VERSION) \
+		--build-arg PRESTISSIMO_VERSION=$(PRESTISSIMO_VERSION) \
+		--target refined \
+		-t $(DOCKER_IMAGE_NAME):$(TAG) .
 
-FQIN=karibbu/${IMAGE_NAME}:${TAG}
-LATEST=karibbu/${IMAGE_NAME}:latest
-
-pull: ## Pull docker image
-	@docker pull ${LATEST} > /dev/null 2>&1 || echo "${FQIN} does not exist yet. Will build it."
-
-build: ## Build docker image. Use f=true to force
-	docker build \
-		--cache-from ${LATEST} \
-		--build-arg PHP_VERSION=${PHP_VERSION} \
-		--build-arg PHP_SHA256=${PHP_SHA256} \
-		--build-arg GPG_KEY_LIST="${GPG_KEY_LIST}" \
-		--build-arg FROM_FQIN=${FROM_FQIN} \
-		--build-arg APCUBC_VERSION=${APCUBC_VERSION} \
-		--build-arg RAPHF_VERSION=${RAPHF_VERSION} \
-		--build-arg AMQP_VERSION=${AMQP_VERSION} \
-		--build-arg COMPOSER_VERSION=${COMPOSER_VERSION} \
-		--build-arg PRESTISSIMO_VERSION=${PRESTISSIMO_VERSION} \
-		-t ${FQIN} .
-
-test: ## Test built docker image
-	docker run --rm ${FQIN} php --version;
-	docker run --rm ${FQIN} php -m;
-
-tag: ## Make a tag alias latest to the built image
-	@docker tag ${FQIN} ${LATEST}
-
-images: ## List built images
-	docker image ls karibbu/${IMAGE_NAME}
-
-push: $(TAGS_TO_PUSH) ## Push built images
-
-$(TAGS_TO_PUSH):
-	docker push karibbu/${IMAGE_NAME}:$@
+test:
+	docker run --rm $(DOCKER_IMAGE_NAME):$(TAG) php --version
+	docker run --rm $(DOCKER_IMAGE_NAME):$(TAG) php -m

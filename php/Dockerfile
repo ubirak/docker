@@ -1,5 +1,4 @@
-ARG FROM_FQIN
-FROM ${FROM_FQIN} as built
+FROM alpine:3.6 as raw
 
 RUN printf "\
 autoconf \
@@ -17,19 +16,23 @@ re2c " > /usr/local/builddeps.list \
 
 ARG PHP_VERSION
 RUN test -n "$PHP_VERSION" || (echo "PHP_VERSION build arg not set" && exit 1)
+ARG PHP_URL
+RUN test -n "$PHP_URL" || (echo "PHP_URL build arg not set" && exit 1)
 ARG PHP_SHA256
 RUN test -n "$PHP_SHA256" || (echo "PHP_SHA256 build arg not set" && exit 1)
 RUN apk add --no-cache libressl
-RUN wget -O php.tar.xz "https://secure.php.net/get/php-${PHP_VERSION}.tar.xz/from/this/mirror" \
+RUN wget -O php.tar.xz "$PHP_URL" \
 	&& echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -
 
 RUN apk add --no-cache gnupg tar xz
+ARG PHP_ASC_URL
+RUN test -n "$PHP_ASC_URL" || (echo "PHP_ASC_URL build arg not set" && exit 1)
 ARG GPG_KEY_LIST
 RUN test -n "$GPG_KEY_LIST" || (echo "GPG_KEY_LIST build arg not set" && exit 1)
 RUN for key in $GPG_KEY_LIST ; do \
         gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
     done \
-	&& wget -O php.tar.xz.asc "https://secure.php.net/get/php-${PHP_VERSION}.tar.xz.asc/from/this/mirror" \
+	&& wget -O php.tar.xz.asc "$PHP_ASC_URL" \
 	&& gpg --batch --verify php.tar.xz.asc php.tar.xz \
     && mkdir -p php \
 	&& tar -Jxf php.tar.xz -C /php --strip-components=1
@@ -137,11 +140,10 @@ RUN rm -rf \
         | xargs -r apk info --installed \
         | sort -u > /usr/local/rundeps.list
 
-FROM built
-ARG FROM_FQIN
-FROM ${FROM_FQIN}
+FROM raw
+FROM alpine:3.6 as refined
 
-COPY --from=built /usr/local /usr/local
+COPY --from=raw /usr/local /usr/local
 
 ARG COMPOSER_VERSION
 RUN addgroup -g 1000 php \
@@ -162,7 +164,6 @@ ENV PATH="$PATH:/home/php/bin" \
     COMPOSER_BIN_DIR=/home/php/bin
 
 ARG PRESTISSIMO_VERSION
-
 RUN if [ -z "$PRESTISSIMO_VERSION" ] || [ "$PRESTISSIMO_VERSION$COMPOSER_VERSION" == "$PRESTISSIMO_VERSION" ] ; then \
         echo "Don't installing prestissimo"; \
     else \
