@@ -21,7 +21,7 @@ env:
             PHP_URL='http://downloads.php.net/~pollita/php-${PHP_VERSION}.tar.xz'
             PHP_ASC_URL='http://downloads.php.net/~pollita/php-${PHP_VERSION}.tar.xz.asc'
         - IMAGE_NAME=netutils
-        - IMAGE_NAME=flow FLOW_VERSION=0.52.0 OCAML_VERSION=4.03.0
+        - IMAGE_NAME=flow FLOW_VERSION=0.53.0 OCAML_VERSION=4.03.0
         - IMAGE_NAME=rabbitmq RABBITMQ_VERSION=3.6.10
 
 before_install:
