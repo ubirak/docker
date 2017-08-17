@@ -73,6 +73,7 @@ RUN mkdir -p $PHP_INI_DIR/conf.d \
         --with-curl \
         --with-libedit \
         --with-openssl \
+        --without-sqlite3 \
         --with-zlib
 
 RUN cd /php \
