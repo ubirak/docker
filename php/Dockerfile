@@ -9,7 +9,6 @@ g++ \
 gcc \
 libc-dev \
 make \
-pcre-dev \
 pkgconf \
 re2c " > /usr/local/builddeps.list \
     && apk add --no-cache $(cat /usr/local/builddeps.list)
