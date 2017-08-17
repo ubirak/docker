@@ -14,12 +14,12 @@ env:
             PHP_SHA256=8943858738604acb33ecedb865d6c4051eeffe4e2d06f3a3c8f794daccaa2aab
             GPG_KEY_LIST="A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E"
         - IMAGE_NAME=php
-            PHP_VERSION=7.2.0beta2
+            PHP_VERSION=7.2.0beta3
             LATEST_TAG=next
-            PHP_SHA256=0e2ac8e68c6fa92e9e14c610d78e162a711ba0e83987ecc9d02a6b898616c92d
+            PHP_SHA256=86ab60f96223768d2cb6b3669ce5d048ce904beccf532119aa02058e7cc9e498
             GPG_KEY_LIST="1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F"
-            PHP_URL='http://downloads.php.net/~pollita/php-${PHP_VERSION}.tar.xz'
-            PHP_ASC_URL='http://downloads.php.net/~pollita/php-${PHP_VERSION}.tar.xz.asc'
+            PHP_URL='http://downloads.php.net/~remi/php-${PHP_VERSION}.tar.xz'
+            PHP_ASC_URL='http://downloads.php.net/~remi/php-${PHP_VERSION}.tar.xz.asc'
         - IMAGE_NAME=netutils
         - IMAGE_NAME=flow FLOW_VERSION=0.53.0 OCAML_VERSION=4.03.0
         - IMAGE_NAME=rabbitmq RABBITMQ_VERSION=3.6.10
