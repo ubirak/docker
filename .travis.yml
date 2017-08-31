@@ -1,64 +1,60 @@
 language: c
-
 dist: trusty
 sudo: required
-
 env:
     global:
         - DOCKER_VERSION=17.06.0~ce-0~ubuntu
         - DOCKER_EXPERIMENTAL=true
         - MAKEFLAGS="--jobs=2 --max-load=4 --always-make --no-print-directory"
     matrix:
-        - IMAGE_NAME=php
-            PHP_VERSION=7.1.8
+        - >-
+            IMAGE_NAME=php PHP_VERSION=7.1.8
             PHP_SHA256=8943858738604acb33ecedb865d6c4051eeffe4e2d06f3a3c8f794daccaa2aab
-            GPG_KEY_LIST="A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E"
-        - IMAGE_NAME=php
-            PHP_VERSION=7.2.0beta3
-            LATEST_TAG=next
-            PHP_SHA256=86ab60f96223768d2cb6b3669ce5d048ce904beccf532119aa02058e7cc9e498
-            GPG_KEY_LIST="1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F"
+            GPG_KEY_LIST="A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0
+            528995BFEDFBA7191D46839EF9BA0ADA31CBD89E"
+        - >-
+            IMAGE_NAME=php PHP_VERSION=7.2.0RC1 LATEST_TAG=next
+            PHP_SHA256=04f68d9accb60e56adecc34a80b84bde16edb255a13eef701ea2d6c2b13dc15b
+            GPG_KEY_LIST="1729F83938DA44E27BA0F4D3DBDB397470D12172
+            B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F"
             PHP_URL='http://downloads.php.net/~remi/php-${PHP_VERSION}.tar.xz'
             PHP_ASC_URL='http://downloads.php.net/~remi/php-${PHP_VERSION}.tar.xz.asc'
         - IMAGE_NAME=netutils
         - IMAGE_NAME=flow FLOW_VERSION=0.53.0 OCAML_VERSION=4.03.0
         - IMAGE_NAME=rabbitmq RABBITMQ_VERSION=3.6.10
-
 before_install:
-    - |
+    - >
         if [ ! -z "${DOCKER_EXPERIMENTAL}" ] ; then
             echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
         fi
-        if [ "$(docker version -f '{{.Server.Version}}')|sed -e 's/-ce.*$//'" != "$(echo ${DOCKER_VERSION}|sed -e 's/~ce.*$//')" ] ; then
+
+        if [ "$(docker version -f '{{.Server.Version}}')|sed -e 's/-ce.*$//'" !=
+        "$(echo ${DOCKER_VERSION}|sed -e 's/~ce.*$//')" ] ; then
             apt-cache madison docker-ce
             sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-ce=${DOCKER_VERSION}
         else
             sudo service docker restart
         fi
-
 install:
-    - make -C ${IMAGE_NAME} pull
-
+    - 'make -C ${IMAGE_NAME} pull'
 script:
-    - make -C ${IMAGE_NAME} build
-    - make -C ${IMAGE_NAME} test
-
+    - 'make -C ${IMAGE_NAME} build'
+    - 'make -C ${IMAGE_NAME} test'
 after_success:
-    - make -C ${IMAGE_NAME} tag
+    - 'make -C ${IMAGE_NAME} tag'
     - docker image ls
-
 deploy:
     provider: script
-    script: docker login --username="${DOCKER_HUB_USERNAME}" --password="${DOCKER_HUB_PASSWORD}" && make -C ${IMAGE_NAME} push
+    script: >-
+        docker login --username="${DOCKER_HUB_USERNAME}"
+        --password="${DOCKER_HUB_PASSWORD}" && make -C ${IMAGE_NAME} push
     skip_cleanup: true
-    on:
+    'on':
         branch: master
-
 notifications:
-    slack: verylastroom:yqs3UqNXq6H3L9p8npeVFWgh
+    slack: 'verylastroom:yqs3UqNXq6H3L9p8npeVFWgh'
     email:
         recipients:
             - ci@karibbu.com
         on_success: change
         on_failure: change
-
