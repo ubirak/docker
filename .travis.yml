@@ -21,7 +21,7 @@ env:
             PHP_ASC_URL='http://downloads.php.net/~remi/php-${PHP_VERSION}.tar.xz.asc'
         - IMAGE_NAME=netutils
         - IMAGE_NAME=flow FLOW_VERSION=0.54.1 OCAML_VERSION=4.03.0
-        - IMAGE_NAME=rabbitmq RABBITMQ_VERSION=3.6.10
+        - IMAGE_NAME=rabbitmq RABBITMQ_VERSION=3.6.12-management
 before_install:
     - >
         if [ ! -z "${DOCKER_EXPERIMENTAL}" ] ; then
