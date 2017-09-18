@@ -1,0 +1,10 @@
+[ { rabbit, [
+    { loopback_users, [ ] },
+    { tcp_listeners, [ 5672 ] },
+    { ssl_listeners, [ ] },
+    { hipe_compile, false }
+  ] },
+  { rabbitmq_management, [
+    { load_definitions, "/etc/rabbitmq/rabbitmq_definitions.json" }
+  ] }
+].
