@@ -1,8 +1,0 @@
-{
-    "vhosts":[
-        {"name":"/"}
-    ],
-    "policies":[
-        {"vhost":"/","name":"ha","pattern":".*", "definition":{"ha-mode":"all"}}
-    ]
-}
