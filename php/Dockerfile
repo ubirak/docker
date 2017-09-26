@@ -49,7 +49,6 @@ ENV CFLAGS="-fstack-protector-strong -fpic -fpie -O2" \
 RUN apk add --no-cache \
         curl-dev \
         icu-dev \
-        libedit-dev \
         libressl-dev \
         libxml2-dev \
         zlib-dev
@@ -72,7 +71,6 @@ RUN mkdir -p $PHP_INI_DIR/conf.d \
         --with-config-file-path="$PHP_INI_DIR" \
         --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
         --with-curl \
-        --with-libedit \
         --with-openssl \
         --without-sqlite3 \
         --with-zlib
