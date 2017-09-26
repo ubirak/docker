@@ -128,6 +128,13 @@ extension=amqp.so\n\
 " > $PHP_INI_DIR/conf.d/100-amqp.ini; \
     fi
 
+ARG AST_VERSION
+RUN if [ -z "$AST_VERSION" ] ; then \
+        echo "Don't installing ast extension"; \
+    else \
+        pecl install ast-${AST_VERSION}; \
+    fi
+
 RUN rm -rf \
         /usr/local/php/man \
         /usr/local/lib/perl5 \
