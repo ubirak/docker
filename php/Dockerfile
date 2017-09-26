@@ -49,7 +49,6 @@ ENV CFLAGS="-fstack-protector-strong -fpic -fpie -O2" \
 RUN apk add --no-cache \
         curl-dev \
         icu-dev \
-        libedit-dev \
         libressl-dev \
         libxml2-dev \
         zlib-dev
@@ -72,7 +71,6 @@ RUN mkdir -p $PHP_INI_DIR/conf.d \
         --with-config-file-path="$PHP_INI_DIR" \
         --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
         --with-curl \
-        --with-libedit \
         --with-openssl \
         --without-sqlite3 \
         --with-zlib
@@ -128,6 +126,13 @@ RUN if [ -z "$AMQP_VERSION" ] ; then \
         && printf "\
 extension=amqp.so\n\
 " > $PHP_INI_DIR/conf.d/100-amqp.ini; \
+    fi
+
+ARG AST_VERSION
+RUN if [ -z "$AST_VERSION" ] ; then \
+        echo "Don't installing ast extension"; \
+    else \
+        pecl install ast-${AST_VERSION}; \
     fi
 
 RUN rm -rf \
