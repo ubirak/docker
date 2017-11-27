@@ -8,12 +8,8 @@ env:
         - MAKEFLAGS="--jobs=2 --max-load=4 --always-make --no-print-directory"
     matrix:
         - >-
-            IMAGE_NAME=php-docker
-            PHP_VERSION=7.1.11
-            DOCKER_CONTAINER_VERSION=stable
-        - >-
-            IMAGE_NAME=php PHP_VERSION=7.1.11
-            PHP_SHA256=074093e9d7d21afedc5106904218a80a47b854abe368d2728ed22184c884893e
+            IMAGE_NAME=php PHP_VERSION=7.1.12
+            PHP_SHA256=a0118850774571b1f2d4e30b4fe7a4b958ca66f07d07d65ebdc789c54ba6eeb3
             GPG_KEY_LIST="A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0
             528995BFEDFBA7191D46839EF9BA0ADA31CBD89E"
         - >-
