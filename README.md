@@ -1,6 +1,6 @@
-# Karibbu docker
+# ubirak docker
 
-Monorepo for Karibbu public docker images builds:
+Monorepo for ubirak public docker images builds:
 - [flow](./flow)
 - [php](./php)
 - [netutils](./netutils)
