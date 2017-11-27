@@ -3,22 +3,18 @@ dist: trusty
 sudo: required
 env:
     global:
-        - DOCKER_VERSION=17.06.2~ce-0~ubuntu
+        - DOCKER_VERSION=17.11.0~ce-0~ubuntu
         - DOCKER_EXPERIMENTAL=true
         - MAKEFLAGS="--jobs=2 --max-load=4 --always-make --no-print-directory"
     matrix:
         - >-
-            IMAGE_NAME=php-docker
-            PHP_VERSION=7.1.11
-            DOCKER_CONTAINER_VERSION=stable
-        - >-
-            IMAGE_NAME=php PHP_VERSION=7.1.11
-            PHP_SHA256=074093e9d7d21afedc5106904218a80a47b854abe368d2728ed22184c884893e
+            IMAGE_NAME=php PHP_VERSION=7.1.12
+            PHP_SHA256=a0118850774571b1f2d4e30b4fe7a4b958ca66f07d07d65ebdc789c54ba6eeb3
             GPG_KEY_LIST="A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0
             528995BFEDFBA7191D46839EF9BA0ADA31CBD89E"
         - >-
-            IMAGE_NAME=php PHP_VERSION=7.2.0RC5 LATEST_TAG=next
-            PHP_SHA256=92a745048912beb3f6c2a3c188ce695a51852c67201fdf9a21dafe59f51aecc1
+            IMAGE_NAME=php PHP_VERSION=7.2.0RC6 LATEST_TAG=next
+            PHP_SHA256=be4df00ff5b66e9f13c83e1d08d1d5384ae7ccc820e26f7e5f9e660011496a9e
             GPG_KEY_LIST="1729F83938DA44E27BA0F4D3DBDB397470D12172
             B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F"
             PHP_URL='http://downloads.php.net/~pollita/php-${PHP_VERSION}.tar.xz'
