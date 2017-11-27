@@ -1,4 +1,4 @@
 # php
 
-Karibbu php docker containers distributed on [docker hub](https://hub.docker.com/r/karibbu/php/tags/).
+ubirak php docker containers distributed on [docker hub](https://hub.docker.com/r/ubirak/php/tags/).
 

@@ -1,7 +1,7 @@
 TAG?=latest
 TAGS_TO_PULL?=latest
 LATEST_TAG?=latest
-DOCKER_IMAGE_NAME=karibbu/$(IMAGE_NAME)
+DOCKER_IMAGE_NAME=ubirak/$(IMAGE_NAME)
 
 pull: $(TAGS_TO_PULL)
 
