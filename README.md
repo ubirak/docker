@@ -5,3 +5,4 @@ Monorepo for ubirak public docker images builds:
 - [php](./php)
 - [netutils](./netutils)
 - [rabbitmq](./rabbitmq)
+- [moco](./moco)
