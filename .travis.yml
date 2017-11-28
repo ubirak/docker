@@ -9,7 +9,7 @@ env:
     matrix:
         - >-
              IMAGE_NAME=php-docker
-             PHP_VERSION=7.2.0RC6
+             PHP_VERSION=7.2.0
              DOCKER_CONTAINER_VERSION=stable
         - >-
             IMAGE_NAME=php PHP_VERSION=7.1.12
