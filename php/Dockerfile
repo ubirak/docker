@@ -1,4 +1,4 @@
-FROM alpine:3.6 as raw
+FROM alpine:3.7 as raw
 
 RUN printf "\
 autoconf \
@@ -10,7 +10,9 @@ gcc \
 libc-dev \
 make \
 pkgconf \
-re2c " > /usr/local/builddeps.list \
+re2c \
+libressl \
+ca-certificates" > /usr/local/builddeps.list \
     && apk add --no-cache $(cat /usr/local/builddeps.list)
 
 ARG PHP_VERSION
@@ -19,7 +21,6 @@ ARG PHP_URL
 RUN test -n "$PHP_URL" || (echo "PHP_URL build arg not set" && exit 1)
 ARG PHP_SHA256
 RUN test -n "$PHP_SHA256" || (echo "PHP_SHA256 build arg not set" && exit 1)
-RUN apk add --no-cache libressl
 RUN wget -O php.tar.xz "$PHP_URL" \
 	&& echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -
 
@@ -147,7 +148,7 @@ RUN rm -rf \
         | sort -u > /usr/local/rundeps.list
 
 FROM raw
-FROM alpine:3.6 as refined
+FROM alpine:3.7 as refined
 
 COPY --from=raw /usr/local /usr/local
 
@@ -157,8 +158,7 @@ RUN addgroup -g 1000 php \
     && mkdir -p /home/php/app /home/php/bin \
     && chown php:php /home/php/app /home/php/bin \
     && apk add --no-cache $(cat /usr/local/rundeps.list) \
-    && apk add --no-cache libressl && \
-    if [ -z "$COMPOSER_VERSION" ] ; then \
+    && if [ -z "$COMPOSER_VERSION" ] ; then \
          echo "Don't installing composer"; \
     else \
         wget -O - https://getcomposer.org/installer | php -- --install-dir=/home/php/bin --filename=composer --version=${COMPOSER_VERSION} \
