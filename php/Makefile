@@ -4,9 +4,9 @@ include ../Makefile
 
 APCUBC_VERSION?=
 RAPHF_VERSION?=2.0.0
-AMQP_VERSION?=1.9.1
-AST_VERSION?=0.1.5
-COMPOSER_VERSION?=1.5.2
+AMQP_VERSION?=1.9.3
+AST_VERSION?=0.1.6
+COMPOSER_VERSION?=1.6.2
 PRESTISSIMO_VERSION?=0.3.7
 PHP_URL?="https://secure.php.net/get/php-$(PHP_VERSION).tar.xz/from/this/mirror"
 PHP_ASC_URL?="https://secure.php.net/get/php-$(PHP_VERSION).tar.xz.asc/from/this/mirror"
